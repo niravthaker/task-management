@@ -35,7 +35,7 @@ public class TaskAPIClient {
 	}
 	
 	protected String getUsersURI(){
-		return String.format("%s/%s/users", version, baseUri);
+		return String.format("%s/%s/users", baseUri,version);
 	}
 	protected String getSingleUserURI(String userId){
 		return String.format("%s/%s", getUsersURI(), userId);
@@ -55,23 +55,27 @@ public class TaskAPIClient {
 										.accept(MediaType.APPLICATION_JSON)
 										.put(ClientResponse.class, user);
 		if(response.getStatus() != Status.CREATED.getStatusCode())
-			throw new RuntimeException(String.format("User creation failed: '%s'", user.getUserId()));
+			throw new RuntimeException(String.format("User creation failed: '%s' %n ERROR: %s", 
+														user.getUserId(),
+														response.getEntity(String.class)));
 	}
 	
 	public User getUser(String userId){
 		return client.resource(getSingleUserURI(userId))
 					 .type(MediaType.APPLICATION_JSON)
 					 .accept(MediaType.APPLICATION_JSON)
-					 .get(User.class);
+					 .get(EndUser.class);
 	}
 	
 	public User update(User user){
-		ClientResponse response = client.resource(getSingleUserURI(user.getUserId()))
+		ClientResponse response = client.resource(getUsersURI())
 				.type(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.post(ClientResponse.class, user);
 		if(response.getStatus() != Status.OK.getStatusCode())
-			throw new RuntimeException(String.format("Update failed with status code: %s", response.getStatus()));
+			throw new RuntimeException(String.format("Update failed with status code: %s, %nERROR: %s", 
+					response.getStatus(),
+					response.getEntity(String.class)));
 		return client.resource(response.getEntity(URI.class)).get(EndUser.class);
 	}
 	

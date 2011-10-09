@@ -24,4 +24,15 @@ public class APIUtils {
 	public static String getBaseURL() {
 		return getProperties().getProperty("baseURL");
 	}
+	
+	public static String getVersion(){
+		return getProperties().getProperty("version");
+	}
+	
+	public static String getUser(){
+		return getProperties().getProperty("user");
+	}
+	public static String getPassword(){
+		return getProperties().getProperty("password");
+	}
 }
