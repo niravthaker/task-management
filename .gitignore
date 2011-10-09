@@ -1,0 +1,10 @@
+#Derived
+*.class
+*.war
+*.jar
+*.log
+
+#Eclipse
+.settings
+.project
+.classpath
