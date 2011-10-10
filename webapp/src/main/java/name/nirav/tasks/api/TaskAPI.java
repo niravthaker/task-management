@@ -1,5 +1,7 @@
 package name.nirav.tasks.api;
 
+import java.net.URI;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -22,9 +24,13 @@ import name.nirav.tasks.core.dao.impl.NoSqlTaskDaoImpl;
 import name.nirav.tasks.core.dao.impl.NoSqlTaskEventDaoImpl;
 import name.nirav.tasks.core.dao.impl.NoSqlUserDaoImpl;
 import name.nirav.tasks.core.eventsourcing.TaskServiceDelegatingListener;
+import name.nirav.tasks.core.eventsourcing.events.CreateTaskEvent;
+import name.nirav.tasks.core.eventsourcing.events.DeleteTaskEvent;
+import name.nirav.tasks.core.eventsourcing.events.UpdateTaskEvent;
 import name.nirav.tasks.core.model.Task;
 import name.nirav.tasks.core.model.User;
 import name.nirav.tasks.core.model.impl.EndUser;
+import name.nirav.tasks.core.model.impl.FreeFormTask;
 import name.nirav.tasks.core.service.TaskEventService;
 import name.nirav.tasks.core.service.TaskService;
 import name.nirav.tasks.core.service.UserService;
@@ -37,7 +43,7 @@ public class TaskAPI {
 	private static UserService userService = new UserServiceImpl(new NoSqlUserDaoImpl());
 	private static TaskEventService taskEventService = new TaskEventServiceImpl(new NoSqlTaskEventDaoImpl());
 	private static TaskService taskService = new TaskServiceImpl(new NoSqlTaskDaoImpl());
-
+	
 	static{
 		taskEventService.addListener(new TaskServiceDelegatingListener(taskService));
 	}
@@ -95,16 +101,45 @@ public class TaskAPI {
 
 	
 	@GET
-	@Path("{user}/projects")
+	@Path("users/{user}/tasks")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Task> getTasks(){
-		return taskService.list();
+	public Collection<Task> getTasks(@PathParam("user") String user){
+		return taskService.list(user);
 	}
 	
 	@GET
-	@Path("{user}/user/project/{id}")
+	@Path("users/{user}/tasks/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Task getTasksForUser(@PathParam("user") String user, @PathParam("id")String id){
-		return taskService.get(id);
+	public Response getTasksForUser(@PathParam("user") String user, @PathParam("id")String taksId){
+		Task task = taskService.get(user, taksId);
+		return task == Task.NullTask ? Response.status(Status.NOT_FOUND).build() : Response.ok(task).build() ;
 	}
+	
+	@DELETE
+	@Path("users/{user}/tasks/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteTask(@PathParam("user") String user, @PathParam("id")String id){
+		taskEventService.publish(new DeleteTaskEvent(user, id));
+		return Response.ok().build();
+	}
+	
+	@PUT
+	@Path("users/{user}/tasks")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createTask(@Context UriInfo uinfo, @PathParam("user")String user, FreeFormTask task){
+		taskEventService.publish(new CreateTaskEvent(user, task.getId(), task));
+		return Response.created(uinfo.getAbsolutePathBuilder().path(task.getId()).build("")).build();
+	}
+
+	@POST
+	@Path("users/{user}/tasks")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public URI updateTask(@Context UriInfo uinfo, @PathParam("user")String user, FreeFormTask task){
+		String taskId = task.getId();
+		Task oldTask = taskService.get(user, taskId);
+		taskEventService.publish(new UpdateTaskEvent(user, taskId, new SimpleEntry<Task, Task>(oldTask, task)));
+		return uinfo.getAbsolutePathBuilder().path(taskId).build("");
+	}
+	
 }

@@ -54,11 +54,19 @@ public class TaskModelTests {
 
 	}
 	public static FreeFormTask newTask(String title, String startDate, String endDate) {
-		return new FreeFormTask(title, parseDate(startDate), parseDate(endDate), 0);
+		FreeFormTask freeFormTask = new FreeFormTask(title, parseDate(startDate), parseDate(endDate), 0);
+		freeFormTask.setId(String.valueOf(counter++));
+		return freeFormTask;
 	}
 	public static FreeFormTask newTask(int progress) {
-		return new FreeFormTask("Untitled" + progress, parseDate("1/1/2001"), parseDate("1/1/2001"), progress);
+		FreeFormTask freeFormTask = new FreeFormTask("Untitled" + progress, parseDate("1/1/2001"), parseDate("1/1/2001"), progress);
+		freeFormTask.setId(String.valueOf(counter++));
+		return freeFormTask;
 	}
+	
+	static int counter = 0;
+	
+	
 	public static FreeFormTask newTask(int progress, int duration) {
 		return new FreeFormTask("Untitled" + progress, dateFromToday(-duration), new Date(), progress);
 	}

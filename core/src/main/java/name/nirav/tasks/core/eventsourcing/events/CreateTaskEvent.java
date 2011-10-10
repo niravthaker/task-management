@@ -7,14 +7,13 @@ import name.nirav.tasks.core.service.TaskService;
 
 public class CreateTaskEvent extends BaseTaskEvent<Task>{
 
-	public CreateTaskEvent(String id, Task data) {
-		super(id, data);
+	public CreateTaskEvent(String userId, String id, Task data) {
+		super(userId, id, data);
 	}
 
 	public void operate(TaskService taskService) {
 		Task data = eventData();
-		data.setId(Task.NEW_ITEM_ID);
-		taskService.create(data);
+		taskService.create(getUserId(), data);
 	}
 
 	public EventType type() {

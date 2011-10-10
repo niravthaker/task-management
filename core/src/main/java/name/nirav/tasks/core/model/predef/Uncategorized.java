@@ -4,10 +4,13 @@ import name.nirav.tasks.core.model.Category;
 
 
 
-public class Uncategorized implements Category {
+public class Uncategorized extends Category {
 
-	public String name() {
+	public String getName() {
 		return "Uncategorized";
 	}
+
+	@Override
+	public void setName(String name) {}
 
 }

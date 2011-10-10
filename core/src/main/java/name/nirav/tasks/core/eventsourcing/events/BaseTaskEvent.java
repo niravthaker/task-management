@@ -4,14 +4,16 @@ import java.util.Date;
 
 import name.nirav.tasks.core.eventsourcing.Event;
 
-public abstract class BaseTaskEvent<D> implements Event<String,D> {
+public abstract class BaseTaskEvent<D> implements Event<String, D> {
 
 	private final String id;
 	private final Date timestamp = new Date();
+	private final String userId;
 	private D data;
-	
-	public BaseTaskEvent(String id, D data) {
-		this.id = id;
+
+	public BaseTaskEvent(String userId, String taskId, D data) {
+		this.userId = userId;
+		this.id = taskId;
 		this.data = data;
 	}
 
@@ -27,6 +29,10 @@ public abstract class BaseTaskEvent<D> implements Event<String,D> {
 		return data;
 	}
 
+	public String getUserId() {
+		return userId;
+	}
+
 	public String serialize() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(timestamp());
@@ -37,7 +43,7 @@ public abstract class BaseTaskEvent<D> implements Event<String,D> {
 		builder.append(serializeEventData());
 		return builder.toString();
 	}
-	
+
 	protected abstract String serializeEventData();
 
 }

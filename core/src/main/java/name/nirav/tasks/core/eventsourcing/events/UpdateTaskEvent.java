@@ -9,13 +9,13 @@ import name.nirav.tasks.core.service.TaskService;
 
 public class UpdateTaskEvent extends BaseTaskEvent<Map.Entry<Task, Task>> {
 
-	public UpdateTaskEvent(String id, Map.Entry<Task, Task> data) {
-		super(id, data);
+	public UpdateTaskEvent(String userId, String id, Map.Entry<Task, Task> data) {
+		super(userId, id, data);
 	}
 
 	public void operate(TaskService taskService) {
 		String id = eventData().getValue().getId();
-		taskService.update(id, eventData().getValue());
+		taskService.update(getUserId(), id, eventData().getValue());
 	}
 
 	public EventType type() {

@@ -36,7 +36,7 @@ public class UserAPITests extends BaseAPITests {
 	public void deleteUser() {
 		createUserInternal(USERID, PASS, EMAIL, FNAME, LNAME);
 		try {
-			apiClient.delete(USERID);
+			apiClient.deleteUser(USERID);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Failed to delete user");
@@ -48,7 +48,7 @@ public class UserAPITests extends BaseAPITests {
 		createUserInternal(USERID, PASS, EMAIL, FNAME, LNAME);
 		String updatedUserId = "niravn1";
 		User editedUser = stubUser(updatedUserId, PASS, EMAIL, FNAME, LNAME);
-		User updated = apiClient.update(editedUser);
+		User updated = apiClient.updateUser(editedUser);
 		assertEquals(updatedUserId, updated.getUserId());
 	}
 

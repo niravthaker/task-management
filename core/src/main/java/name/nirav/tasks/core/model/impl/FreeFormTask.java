@@ -13,12 +13,27 @@ public class FreeFormTask extends AbstractTask implements Task {
 	private static final long serialVersionUID = 6063187553171803105L;
 	private int progress;
 
-	public void setProgress(int progress) {
+	//JSON serialization hack
+	public FreeFormTask() {
+		super(null, null, null);
+	}
+	public void setNew(boolean isnew){
+		
+	}
+	public void setType(TaskType type){
+	}
+
+	public void setParent(FreeFormTask parent) {
+		super.setParent(parent);
+	}
+	//Hack ends
+	
+	public FreeFormTask(String title, Date startDate, Date endDate, int progress) {
+		super(title, startDate, endDate);
 		this.progress = progress;
 	}
 
-	public FreeFormTask(String title, Date startDate, Date endDate, int progress) {
-		super(title, startDate, endDate);
+	public void setProgress(int progress) {
 		this.progress = progress;
 	}
 
@@ -40,7 +55,6 @@ public class FreeFormTask extends AbstractTask implements Task {
 	public Map<String, Object> diff(Task other) {
 		return Collections.emptyMap();
 	}
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -54,7 +68,7 @@ public class FreeFormTask extends AbstractTask implements Task {
 		builder.append(',');
 		builder.append(getProgress());
 		builder.append(',');
-		builder.append(getCategory().name());
+		builder.append(getCategory().getName());
 		return builder.toString();
 	}
 

@@ -22,6 +22,7 @@ import org.junit.Test;
 
 public class TaskEventTest {
 	
+	private static final String TEST_USERID = "thakern";
 	private TaskEventServiceImpl eventService;
 	private TaskService taskService;
 	private TaskServiceDelegatingListener delegatingListener;
@@ -40,25 +41,25 @@ public class TaskEventTest {
 		//Create
 		String taskTitle = "Test Task";
 		Task task = TaskModelTests.newTask("1", taskTitle);
-		eventService.publish(new CreateTaskEvent(task.getId(), task));
+		eventService.publish(new CreateTaskEvent(TEST_USERID,task.getId(), task));
 		assertEquals(1, eventService.events(task.getId()).size());
-		Task snapshot = taskService.get(task.getId());
+		Task snapshot = taskService.get(TEST_USERID,task.getId());
 		assertNotNull(snapshot);
 		assertEquals(taskTitle, snapshot.getTitle());
 		
 		//Update
 		String updatedTitle = "Edited Test Task";
 		Task updatedTask = TaskModelTests.newTask(task.getId(), updatedTitle);
-		eventService.publish(new UpdateTaskEvent(task.getId(), new SimpleEntry<Task, Task>(task, updatedTask)));
+		eventService.publish(new UpdateTaskEvent(TEST_USERID,task.getId(), new SimpleEntry<Task, Task>(task, updatedTask)));
 		assertEquals(2, eventService.events(task.getId()).size());
-		snapshot = taskService.get(task.getId());
+		snapshot = taskService.get(TEST_USERID,task.getId());
 		assertNotNull(snapshot);
 		assertEquals(updatedTitle, snapshot.getTitle());
 		
 		//Delete
-		eventService.publish(new DeleteTaskEvent(task.getId()));
+		eventService.publish(new DeleteTaskEvent(TEST_USERID,task.getId()));
 		assertEquals(3, eventService.events(task.getId()).size());
-		snapshot = taskService.get(task.getId());
+		snapshot = taskService.get(TEST_USERID,task.getId());
 		assertEquals(Task.NullTask, snapshot);
 	}
 	
@@ -67,18 +68,18 @@ public class TaskEventTest {
 		String TASK_ID = "1";
 		Task testTask = TaskModelTests.newTask(TASK_ID, "Test");
 		eventService.removeListener(delegatingListener);
-		eventService.publish(new CreateTaskEvent(TASK_ID, testTask));
+		eventService.publish(new CreateTaskEvent(TEST_USERID,TASK_ID, testTask));
 		String updatedTitle = "Updated Test";
-		eventService.publish(new UpdateTaskEvent(TASK_ID, new SimpleEntry<Task, Task>(testTask, TaskModelTests.newTask(TASK_ID, updatedTitle))));
-		eventService.publish(new DeleteTaskEvent(TASK_ID));
+		eventService.publish(new UpdateTaskEvent(TEST_USERID,TASK_ID, new SimpleEntry<Task, Task>(testTask, TaskModelTests.newTask(TASK_ID, updatedTitle))));
+		eventService.publish(new DeleteTaskEvent(TEST_USERID,TASK_ID));
 		assertEquals(3, eventService.events(TASK_ID).size());
-		assertEquals(Task.NullTask, taskService.get(TASK_ID));
+		assertEquals(Task.NullTask, taskService.get(TEST_USERID,TASK_ID));
 		eventService.addListener(delegatingListener);
-		eventService.publish(new CreateTaskEvent(TASK_ID, testTask));
-		eventService.publish(new UpdateTaskEvent(TASK_ID, new SimpleEntry<Task, Task>(testTask, TaskModelTests.newTask(TASK_ID, updatedTitle))));
+		eventService.publish(new CreateTaskEvent(TEST_USERID,TASK_ID, testTask));
+		eventService.publish(new UpdateTaskEvent(TEST_USERID,TASK_ID, new SimpleEntry<Task, Task>(testTask, TaskModelTests.newTask(TASK_ID, updatedTitle))));
 		assertEquals(5, eventService.events(TASK_ID).size());
 		eventService.rollEvents(TASK_ID);
-		Task recreted = taskService.get(TASK_ID);
+		Task recreted = taskService.get(TEST_USERID,TASK_ID);
 		assertTrue(recreted != Task.NullTask);
 		assertEquals(TASK_ID, recreted.getId());
 		assertEquals(updatedTitle, recreted.getTitle());

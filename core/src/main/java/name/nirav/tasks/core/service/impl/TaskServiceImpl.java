@@ -11,33 +11,29 @@ import name.nirav.tasks.core.model.Task;
 import name.nirav.tasks.core.service.TaskService;
 
 public class TaskServiceImpl implements TaskService {
-	private TaskDao taskDao;
+	private TaskDao<Task, String> taskDao;
 	
-	public TaskServiceImpl(TaskDao taskDao) {
+	public TaskServiceImpl(TaskDao<Task, String> taskDao) {
 		this.taskDao = taskDao;
 	}
 
-	public Task get(String projectId) {
-		Task task = taskDao.get(projectId);
+	public Task get(String userId, String projectId) {
+		Task task = taskDao.get(userId, projectId);
 		return task == null ? Task.NullTask : task;
 	}
 
-	public Task create(Task project) throws CyclicTaskException{
-		if(!project.isNew())
-			throw new IllegalArgumentException("Project is persistent with id:" +  project.getId());
+	public Task create(String userId, Task project) throws CyclicTaskException{
 		detectCycle(project);
-		return taskDao.create(project);
+		return taskDao.create(userId, project);
 	}
 
-	public void update(String projectId, Task project) throws CyclicTaskException{
-		if(project.isNew())
-			throw new IllegalArgumentException("Task is not persistent.");
+	public void update(String userId, String projectId, Task project) throws CyclicTaskException{
 		detectCycle(project);
-		taskDao.update(projectId, project);
+		taskDao.update(userId, projectId, project);
 	}
 
-	public void delete(String id) {
-		taskDao.delete(id);
+	public void delete(String userId, String taskId) {
+		taskDao.delete(userId, taskId);
 	}
 
 	private void detectCycle(final Task project)throws CyclicTaskException {
@@ -62,8 +58,8 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public Collection<Task> list() {
-		return taskDao.list();
+	public Collection<Task> list(String userId) {
+		return taskDao.list(userId);
 	}
 
 }

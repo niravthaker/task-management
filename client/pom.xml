@@ -20,21 +20,4 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-acr-plugin</artifactId>
-                <version>1.0</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>name.nirav.tasks.api.client.Main</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
