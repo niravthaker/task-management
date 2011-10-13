@@ -1,0 +1,18 @@
+<html>
+	<head>
+		<title>Tasks App Integration Tests</title>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.js" ></script>
+		<script type="text/javascript" src="scripts/tasks.js" ></script>
+		<script type="text/javascript" src="scripts/tasks-test.js" ></script>
+	</head>
+	<body>
+		<div id="log" style="width:100%; background: black; color: white">
+		
+		</div>
+	</body>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			_taskTest.run('#log');
+		});
+	</script>
+</html>

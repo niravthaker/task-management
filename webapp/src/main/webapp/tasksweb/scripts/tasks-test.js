@@ -172,7 +172,7 @@ _taskTest = {
 			_tasks.createTask('jstest',{id: "ID1" ,title:'JS Task to be updated', startDate:new Date(), endDate: new Date(), progress:  10}, {
 				error: function(e){}, success: function(e){}
 			});
-			_tasks.updateTask('jstest',{id: "ID(updated)" ,title:'JS Task (updated)', startDate:new Date(), endDate: new Date(), progress: 20}, {
+			_tasks.updateTask('jstest',{id: "ID(updated)" ,title:'JS Task (updated_', startDate:new Date(), endDate: new Date(), progress: 20}, {
 				error: function(e){
 					error($("#updateTask"), "Update failed: " + e.responseText);
 				}, 

@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -43,6 +44,8 @@ public class TaskAPI {
 	private static UserService userService = new UserServiceImpl(new NoSqlUserDaoImpl());
 	private static TaskEventService taskEventService = new TaskEventServiceImpl(new NoSqlTaskEventDaoImpl());
 	private static TaskService taskService = new TaskServiceImpl(new NoSqlTaskDaoImpl());
+	
+	private static final Logger log = Logger.getLogger(TaskAPI.class.getSimpleName()); 
 	
 	static{
 		taskEventService.addListener(new TaskServiceDelegatingListener(taskService));
@@ -95,8 +98,9 @@ public class TaskAPI {
 	@Path("users/{user}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response deleteUser(@Context UriInfo uinfo, @PathParam("user") String user){
+		log.info("Deleting user : " + user);
 		userService.delete(user);
-		return Response.ok().build();
+		return Response.status(Status.NO_CONTENT).build();
 	}
 
 	
@@ -120,7 +124,7 @@ public class TaskAPI {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteTask(@PathParam("user") String user, @PathParam("id")String id){
 		taskEventService.publish(new DeleteTaskEvent(user, id));
-		return Response.ok().build();
+		return Response.status(Status.NO_CONTENT).build();
 	}
 	
 	@PUT
